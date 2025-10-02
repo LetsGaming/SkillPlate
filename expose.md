@@ -10,12 +10,15 @@
     - Erstellen von Rezeptideen für die Kurse
 - Bei Webinaren durch KI erstellte Einkaufsliste bei Märkten in der Nähe (optional)
     - Umkreis konfigurierbar
-## Rechnungseingangsworkflow (Optional)
-- KI-gestützter Rechnungseingangsworkflow
+## Rechnungsworkflow (Optional)
+- KI-gestützter Rechnungseingang
     - KI übernimmt erste Überprüfung von eingehenden Rechnungen
         - evtl. nur automatisches Prüfen, wenn Rechnung unter konfiguriertem Betrag
     - Von KI geprüfte Rechnungen werden automatisch bearbeitet und auch beglichen (Begleichen als Beta-Feature, optional)
     - Rechnungen, die durch KI-Prüfung durchfallen, werden an Menschen weitergeleitet
+    - KI-gestützte Rechnungsstellung an Kursteilnehmer
+        - Promotioncodes für Rabatte
+        - KI tracked Kursanmeldungen und stellt entsprechende Rechnungen
 ## Zertifizierung
     - KI überwacht Kursfortschritt von Teilnehmern
         - anhand einer Teilnehmerliste
