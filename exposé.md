@@ -1,8 +1,8 @@
 # Exposé
 Projekttitel: SkillPlate
-Ausgangssituation/Problemstellung:
+## Ausgangssituation/Problemstellung:
 {Kunde} ist ein e.V., der Kochkurse sowohl in Präsenz als auch als Webinar anbietet. Er benötigt eine Plattform, die es ihm ermöglicht Kurse zu verwalten und zu zertifizieren und eingehende Rechnungen bearbeiten und ausgehende Rechnungen erstellen zu können. Auf Grund eines Mangels an "Mitarbeitern" ist der Wunsch des Kunden möglichst auch auf die Fähigkeiten künstlicher Intelligenz bei der Arbeit zurückgreifen zu können.
-Zielsetzung:
+## Projektziele
 SkillPlate wird als Plattform für {Kunde} dienen, mit der die folgenden Aufgaben mit KI-Unterstützung erledigt werden können:
 - Kursverwaltung
     - Anlegen, bearbeiten & löschen von Kurse
@@ -29,7 +29,6 @@ SkillPlate wird als Plattform für {Kunde} dienen, mit der die folgenden Aufgabe
         - anhand von Bildern zum Fortschritt 
     - KI fertigt Zertifikate nach Vorlage an
     - KI versendet Zertifikate per Mail an Teilnehmer 
-## Projektziele
 --------------------------------------------------------------
 
 ## "Erweiterung/Spezifierung" des Szenarios
