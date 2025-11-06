@@ -1,5 +1,5 @@
-import os
 import json
+import os
 from utils.logger import LOGGER
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

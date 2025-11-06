@@ -1,9 +1,11 @@
-import os
 import importlib
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+
 from utils.logger import LOGGER
 from utils.utils import ROOT_DIR, load_config
+
 
 def load_debug():
     config = load_config()
