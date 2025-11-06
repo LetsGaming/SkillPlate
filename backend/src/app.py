@@ -53,4 +53,4 @@ if __name__ == '__main__':
     port = load_port()
     debug = load_debug()
     LOGGER.info(f"Starting server on port {port}")
-    app.run(debug=debug, port=port)
+    app.run(host='0.0.0.0', debug=debug, port=port)
