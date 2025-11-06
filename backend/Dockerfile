@@ -1,12 +1,12 @@
 FROM python:3.9.24
-WORKDIR /app/backend
+WORKDIR /backend
 
-COPY requirements.txt /app/backend/
+COPY requirements.txt /backend
 
 RUN pip install -r requirements.txt
 
-COPY app.py /app/backend/
+COPY src/ .
 
-EXPOSE 5000
+EXPOSE 8000
 
 CMD [ "python3", "app.py"]
