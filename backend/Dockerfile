@@ -1,12 +1,19 @@
-FROM python:3.9.24
+FROM python:3.12-slim
+
 WORKDIR /backend
 
-COPY requirements.txt /backend
-
-RUN pip install -r requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src/ .
 
-EXPOSE 8000
+# Default environment variables
+ENV PORT=5000
+ENV WORKERS=4
+ENV DEBUG=false
 
-CMD [ "python3", "app.py"]
+EXPOSE ${PORT}
+
+CMD [ "gunicorn", "app:app", \
+      "--bind", "0.0.0.0:${PORT}", \
+      "--workers", "${WORKERS}" ]

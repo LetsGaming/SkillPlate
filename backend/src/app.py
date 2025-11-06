@@ -7,16 +7,11 @@ from utils.logger import LOGGER
 from utils.utils import ROOT_DIR, load_config
 
 
-def load_debug():
-    config = load_config()
-    debug = config.get("debug", False)
-    return debug
-
 def load_port():
-    config = load_config()
-    server_config = config.get("server", {})
-    port = server_config.get("port", 5000)
-    return port
+    return int(os.getenv("PORT", 5000))
+
+def load_debug():
+    return os.getenv("DEBUG", "false").lower() in ("1", "true", "yes")
 
 def create_app():
     app = Flask(__name__)
