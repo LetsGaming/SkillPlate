@@ -28,6 +28,11 @@ def create_app():
     not_allowed_names = ["__init__.py", "config.py"]
 
     api_path = os.path.join(ROOT_DIR, api_directory)
+
+    if not os.path.exists(api_path):
+        LOGGER.warning(f"API directory '{api_path}' does not exist.")
+        return app
+
     api_files = [
         file[:-3]
         for file in os.listdir(api_path)
