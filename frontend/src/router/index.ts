@@ -3,12 +3,34 @@ import { RouteRecordRaw } from 'vue-router';
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '',
-    redirect: '/folder/Inbox'
+    path: '/',
+    redirect: '/home'
   },
   {
-    path: '/folder/:id',
-    component: () => import ('../views/FolderPage.vue')
+    path: '/',
+    component: () => import('@/views/MainLayout.vue'),
+    children: [
+      {
+        path: 'home',
+        name: 'Home',
+        component: () => import('@/views/LandingPage.vue')
+      },
+      {
+        path: 'courses',
+        name: 'Courses',
+        component: () => import('@/views/CourseList.vue')
+      },
+      {
+        path: 'generate',
+        name: 'Generator',
+        component: () => import('@/views/CourseGenerator.vue')
+      }
+    ]
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/LoginView.vue')
   }
 ]
 
