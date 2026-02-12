@@ -1,28 +1,31 @@
 FROM python:3.12-slim
 
-# Set the primary working directory
-WORKDIR /app 
+# Optimization: Don't write .pyc files, log immediately
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
+WORKDIR /backend
+
+# 1. Install dependencies first (better caching)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY src/ /app
-# Copies entrypoint.sh to /app/entrypoint.sh
-COPY entrypoint.sh /app
-# Fix the line endings using sed
-RUN sed -i 's/\r$//' /app/entrypoint.sh
-# Make the script executable
-RUN chmod +x /app/entrypoint.sh
+# 2. Copy ONLY the application package
+# This ignores root-level junk automatically
+COPY app/ ./app/
 
-# Default environment variables
+# 3. Environment settings
 ENV PORT=5000
 ENV WORKERS=4
-ENV DEBUG=false
+ENV PYTHONPATH=/backend
 
 EXPOSE ${PORT}
 
-# Set the entrypoint to the shell script
-ENTRYPOINT ["/bin/sh", "/app/entrypoint.sh"]
-
-# CMD is now optional, or can be left empty
-CMD []
+# 4. Entry point
+# Since run.py is in app/, and /backend is in PYTHONPATH,
+# gunicorn looks for the 'app' package, then the 'run' module.
+CMD ["gunicorn", "app.run:app", \
+     "--bind", "0.0.0.0:5000", \
+     "--workers", "4", \
+     "--access-logfile", "-", \
+     "--error-logfile", "-"]
