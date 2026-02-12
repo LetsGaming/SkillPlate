@@ -4,27 +4,36 @@
       <div class="login-container">
         <div class="login-card">
           <div class="login-header">
-            <h2>Willkommen zurück</h2>
-            <p>Melde dich an, um fortzufahren</p>
+            <h2>{{ isRegisterMode ? 'Konto erstellen' : 'Willkommen zurück' }}</h2>
+            <p>{{ isRegisterMode ? 'Registriere dich, um zu starten' : 'Melde dich an, um fortzufahren' }}</p>
           </div>
 
-          <form @submit.prevent="handleLogin">
+          <form @submit.prevent="isRegisterMode ? handleRegister() : handleLogin()" @keydown="handleEnterKey">
             <ion-item class="custom-input" lines="none">
-              <ion-label position="stacked">Email</ion-label>
-              <ion-input type="email" placeholder="deine@email.com"></ion-input>
+              <ion-label position="stacked">Username</ion-label>
+              <ion-input
+                type="text"
+                placeholder="dein Benutzername"
+                v-model="username"
+              ></ion-input>
             </ion-item>
 
             <ion-item class="custom-input" lines="none">
               <ion-label position="stacked">Passwort</ion-label>
-              <ion-input type="password" placeholder="••••••••"></ion-input>
-            </ion-item>
+              <ion-input
+                :type="showPassword ? 'text' : 'password'"
+                placeholder="••••••••"
+                v-model="password"
+              ></ion-input>
+              </ion-item>
 
-            <div class="forgot-password">
+            <div class="forgot-password" v-if="!isRegisterMode">
               <a href="#">Passwort vergessen?</a>
             </div>
 
-            <ion-button expand="block" type="submit" class="login-btn">
-              Anmelden
+            <ion-button expand="block" type="submit" class="login-btn" :disabled="loading">
+              <ion-spinner v-if="loading" name="crescent"></ion-spinner>
+              <span v-else>{{ isRegisterMode ? 'Registrieren' : 'Anmelden' }}</span>
             </ion-button>
           </form>
 
@@ -32,19 +41,11 @@
             <span>oder</span>
           </div>
 
-          <div class="social-login">
-            <ion-button fill="outline" class="social-btn">
-              <ion-icon slot="start" :icon="logoGoogle"></ion-icon>
-              Google
-            </ion-button>
-            <ion-button fill="outline" class="social-btn">
-              <ion-icon slot="start" :icon="logoApple"></ion-icon>
-              Apple
-            </ion-button>
-          </div>
-
           <div class="signup-link">
-            Noch kein Konto? <a href="#">Registrieren</a>
+            {{ isRegisterMode ? 'Bereits ein Konto?' : 'Noch kein Konto?' }}
+            <a href="#" @click.prevent="toggle('isRegisterMode')">
+              {{ isRegisterMode ? 'Anmelden' : 'Registrieren' }}
+            </a>
           </div>
         </div>
       </div>
@@ -52,18 +53,133 @@
   </ion-page>
 </template>
 
-<script setup lang="ts">
-import { IonPage, IonContent, IonItem, IonLabel, IonInput, IonButton, IonIcon } from '@ionic/vue';
-import { logoGoogle, logoApple } from 'ionicons/icons';
-import { useRouter } from 'vue-router';
+<script lang="ts">
+import { defineComponent } from "vue";
+import {
+  IonPage,
+  IonContent,
+  IonItem,
+  IonLabel,
+  IonInput,
+  IonButton,
+  IonIcon,
+  IonSpinner,
+} from "@ionic/vue";
+import { logoGoogle, logoApple } from "ionicons/icons";
 
-const router = useRouter();
+import UserService from "@/services/UserService";
+import localizationService from "@/services/general/LocalizationService";
+import ToastService from "@/services/general/ToastService";
 
-const handleLogin = () => {
-  // Simulate login
-  console.log('Logging in...');
-  router.push('/home');
-};
+export default defineComponent({
+  name: "LoginPage",
+  components: {
+    IonPage,
+    IonContent,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonButton,
+    IonIcon,
+    IonSpinner,
+  },
+  data() {
+    return {
+      username: "",
+      password: "",
+      // Added missing state properties
+      loading: false,
+      isRegisterMode: false,
+      showPassword: false,
+      // Icons
+      logoGoogle,
+      logoApple,
+    };
+  },
+  methods: {
+    t(key: string, vars?: Record<string, string | number>, fallback?: string) {
+      return localizationService.t(key, vars, fallback);
+    },
+
+    showAuthError(error: { key: string; fallback: string }) {
+      return ToastService.showError(
+        this.t(error.key, undefined, error.fallback)
+      );
+    },
+
+    toggle(flag: "showPassword" | "isRegisterMode") {
+      if (flag === "showPassword") this.showPassword = !this.showPassword;
+      if (flag === "isRegisterMode") this.isRegisterMode = !this.isRegisterMode;
+    },
+
+    handleEnterKey(event: KeyboardEvent) {
+      if (event.key === "Enter") {
+        this.isRegisterMode ? this.handleRegister() : this.handleLogin();
+      }
+    },
+
+    async runAuth<T>(
+      action: () => Promise<T>,
+      error: { key: string; fallback: string }
+    ) {
+      this.loading = true;
+      try {
+        await action();
+        this.redirectUser();
+      } catch (err) {
+        this.showAuthError(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async handleLogin() {
+      if (!this.username || !this.password) {
+        return this.showAuthError({
+          key: "auth.missing_fields",
+          fallback: "Please fill in all the fields.",
+        });
+      }
+
+      await this.runAuth(
+        () =>
+          UserService.login({
+            username: this.username,
+            password: this.password,
+          }),
+        {
+          key: "auth.invalid_credentials",
+          fallback: "Invalid username or password.",
+        }
+      );
+    },
+
+    async handleRegister() {
+      if (!this.username || !this.password) {
+        return this.showAuthError({
+          key: "auth.missing_fields",
+          fallback: "Please fill in all the fields.",
+        });
+      }
+
+      await this.runAuth(
+        () =>
+          UserService.register({
+            username: this.username,
+            password: this.password,
+          }),
+        {
+          key: "auth.registration_failed",
+          fallback: "Could not create account.",
+        }
+      );
+    },
+
+    redirectUser() {
+      this.$router.replace({ name: "home" });
+    },
+  },
+});
 </script>
 
 <style scoped>
@@ -144,7 +260,7 @@ const handleLogin = () => {
 
 .divider::before,
 .divider::after {
-  content: '';
+  content: "";
   flex: 1;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
