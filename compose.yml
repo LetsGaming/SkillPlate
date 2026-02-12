@@ -15,6 +15,7 @@ services:
     restart: unless-stopped
     volumes:
       - oracle_data:/opt/oracle/oradata
+      - ./backend/database/scripts:/opt/oracle/scripts/setup
     networks:
       - ords-net
 
