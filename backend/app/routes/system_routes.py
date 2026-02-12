@@ -1,5 +1,6 @@
 from flask import Blueprint
-from app.utils.responses import success_response
+
+from backend.app.utils.responses import success_response
 
 system_routes = Blueprint("system_routes", __name__)
 

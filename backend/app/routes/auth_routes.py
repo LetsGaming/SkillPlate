@@ -1,12 +1,13 @@
 from flask import Blueprint, request
 from flask_jwt_extended import (
-    jwt_required, 
-    get_jwt_identity, 
-    set_refresh_cookies, 
+    jwt_required,
+    get_jwt_identity,
+    set_refresh_cookies,
     unset_jwt_cookies
 )
-from app.services.auth_service import authenticate_user, generate_user_tokens, refresh_access_token
-from app.utils.responses import success_response, error_response
+
+from backend.app.services.auth_service import authenticate_user, generate_user_tokens, refresh_access_token
+from backend.app.utils.responses import success_response, error_response
 
 auth_routes = Blueprint("auth_routes", __name__)
 
