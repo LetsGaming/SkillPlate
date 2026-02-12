@@ -1,5 +1,6 @@
 from flask import Blueprint
 
+from backend.app.services.ollama_service import generate_course_content
 from backend.app.utils.responses import success_response
 
 course_routes = Blueprint("course_routes", __name__)
@@ -16,6 +17,7 @@ def get_course(id):
 @course_routes.route('/course', defaults={'theme': None, 'difficulty': None, 'duration': None, 'online': None},
                      methods=['POST'])
 @course_routes.route('/course/<string:theme>/<string:difficulty>/<string:duration>/<string:online>', methods=['POST'])
-def create_course():
+def create_course(theme, difficulty, duration, online):
+    course = generate_course_content(theme, difficulty, duration, online)
     return success_response(
         message="Course created successfully")
