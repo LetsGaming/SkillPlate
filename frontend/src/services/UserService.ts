@@ -107,15 +107,7 @@ export default class UserService extends BaseService {
         await TokenUtils.setToken(accessToken);
         return accessToken;
       } catch (error) {
-        if (attempt === retryCount) {
-          await this.handleRequest(
-            Promise.reject(error),
-            RESOURCE_KEY,
-            "auth.refresh_failed",
-          );
-          await this.logout();
-          throw error;
-        }
+        if (attempt === retryCount) throw error;
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
@@ -130,19 +122,13 @@ export default class UserService extends BaseService {
   }
 
   static async deleteProfile() {
-    try {
-      const res = await this.handleRequest(
-        ApiUtils.delete(`${BASE_ENDPOINT}/delete`),
-        "profile.title",
-        "profile.delete_failed",
-      );
-
-      await storageService.clearAll();
-
-      return res;
-    } catch (error) {
-      throw error;
-    }
+    const res = await this.handleRequest(
+      ApiUtils.delete(`${BASE_ENDPOINT}/delete`),
+      "profile.title",
+      "profile.delete_failed",
+    );
+    await storageService.clearAll();
+    return res;
   }
 
   // --- Identity & Role Getters ---

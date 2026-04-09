@@ -8,7 +8,7 @@
             <p>{{ isRegisterMode ? 'Registriere dich, um zu starten' : 'Melde dich an, um fortzufahren' }}</p>
           </div>
 
-          <form @submit.prevent="isRegisterMode ? handleRegister() : handleLogin()" @keydown="handleEnterKey">
+          <form @submit.prevent="isRegisterMode ? handleRegister() : handleLogin()">
             <ion-item class="custom-input" lines="none">
               <ion-label position="stacked">Username</ion-label>
               <ion-input
@@ -43,7 +43,7 @@
 
           <div class="signup-link">
             {{ isRegisterMode ? 'Bereits ein Konto?' : 'Noch kein Konto?' }}
-            <a href="#" @click.prevent="toggle('isRegisterMode')">
+            <a href="#" @click.prevent="isRegisterMode = !isRegisterMode">
               {{ isRegisterMode ? 'Anmelden' : 'Registrieren' }}
             </a>
           </div>
@@ -53,8 +53,9 @@
   </ion-page>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 import {
   IonPage,
   IonContent,
@@ -62,124 +63,63 @@ import {
   IonLabel,
   IonInput,
   IonButton,
-  IonIcon,
   IonSpinner,
 } from "@ionic/vue";
-import { logoGoogle, logoApple } from "ionicons/icons";
 
 import UserService from "@/services/UserService";
 import localizationService from "@/services/general/LocalizationService";
 import ToastService from "@/services/general/ToastService";
 
-export default defineComponent({
-  name: "LoginPage",
-  components: {
-    IonPage,
-    IonContent,
-    IonItem,
-    IonLabel,
-    IonInput,
-    IonButton,
-    IonIcon,
-    IonSpinner,
-  },
-  data() {
-    return {
-      username: "",
-      password: "",
-      // Added missing state properties
-      loading: false,
-      isRegisterMode: false,
-      showPassword: false,
-      // Icons
-      logoGoogle,
-      logoApple,
-    };
-  },
-  methods: {
-    t(key: string, vars?: Record<string, string | number>, fallback?: string) {
-      return localizationService.t(key, vars, fallback);
-    },
+const router = useRouter();
 
-    showAuthError(error: { key: string; fallback: string }) {
-      return ToastService.showError(
-        this.t(error.key, undefined, error.fallback)
-      );
-    },
+const username = ref("");
+const password = ref("");
+const loading = ref(false);
+const isRegisterMode = ref(false);
+const showPassword = ref(false);
 
-    toggle(flag: "showPassword" | "isRegisterMode") {
-      if (flag === "showPassword") this.showPassword = !this.showPassword;
-      if (flag === "isRegisterMode") this.isRegisterMode = !this.isRegisterMode;
-    },
+function t(key: string, vars?: Record<string, string | number>, fallback?: string) {
+  return localizationService.t(key, vars, fallback);
+}
 
-    handleEnterKey(event: KeyboardEvent) {
-      if (event.key === "Enter") {
-        this.isRegisterMode ? this.handleRegister() : this.handleLogin();
-      }
-    },
+function showAuthError(error: { key: string; fallback: string }) {
+  ToastService.showError(t(error.key, undefined, error.fallback));
+}
 
-    async runAuth<T>(
-      action: () => Promise<T>,
-      error: { key: string; fallback: string }
-    ) {
-      this.loading = true;
-      try {
-        await action();
-        this.redirectUser();
-      } catch (err) {
-        this.showAuthError(error);
-      } finally {
-        this.loading = false;
-      }
-    },
+async function runAuth<T>(
+  action: () => Promise<T>,
+  error: { key: string; fallback: string },
+) {
+  loading.value = true;
+  try {
+    await action();
+    router.replace({ name: "Home" });
+  } catch {
+    showAuthError(error);
+  } finally {
+    loading.value = false;
+  }
+}
 
-    async handleLogin() {
-      if (!this.username || !this.password) {
-        return this.showAuthError({
-          key: "auth.missing_fields",
-          fallback: "Please fill in all the fields.",
-        });
-      }
+async function handleLogin() {
+  if (!username.value || !password.value) {
+    return showAuthError({ key: "auth.missing_fields", fallback: "Please fill in all the fields." });
+  }
+  await runAuth(
+    () => UserService.login({ username: username.value, password: password.value }),
+    { key: "auth.invalid_credentials", fallback: "Invalid username or password." },
+  );
+}
 
-      await this.runAuth(
-        () =>
-          UserService.login({
-            username: this.username,
-            password: this.password,
-          }),
-        {
-          key: "auth.invalid_credentials",
-          fallback: "Invalid username or password.",
-        }
-      );
-    },
-
-    async handleRegister() {
-      if (!this.username || !this.password) {
-        return this.showAuthError({
-          key: "auth.missing_fields",
-          fallback: "Please fill in all the fields.",
-        });
-      }
-
-      await this.runAuth(
-        () =>
-          UserService.register({
-            username: this.username,
-            password: this.password,
-          }),
-        {
-          key: "auth.registration_failed",
-          fallback: "Could not create account.",
-        }
-      );
-    },
-
-    redirectUser() {
-      this.$router.replace({ name: "home" });
-    },
-  },
-});
+async function handleRegister() {
+  if (!username.value || !password.value) {
+    return showAuthError({ key: "auth.missing_fields", fallback: "Please fill in all the fields." });
+  }
+  await runAuth(
+    () => UserService.register({ username: username.value, password: password.value }),
+    { key: "auth.registration_failed", fallback: "Could not create account." },
+  );
+}
 </script>
 
 <style scoped>

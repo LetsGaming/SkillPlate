@@ -81,8 +81,6 @@ export abstract class BaseService {
           timestamp: Date.now(),
         });
         return fresh;
-      } catch (error) {
-        throw error;
       } finally {
         this.ongoingRequests.delete(cacheKey);
       }
