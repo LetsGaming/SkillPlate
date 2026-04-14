@@ -78,10 +78,12 @@ class ApiError extends Error {
   }
 }
 
+// These endpoints must not trigger a token refresh attempt to avoid infinite loops.
+// Must stay in sync with backend auth routes.
 const NO_REFRESH_ENDPOINTS = [
-  "/auth/refresh-token",
-  "/auth/login",
-  "/auth/logout",
+  '/auth/refresh',
+  '/auth/login',
+  '/auth/logout',
 ];
 
 /**
