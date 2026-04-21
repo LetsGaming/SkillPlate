@@ -1,14 +1,14 @@
 CREATE TABLE IF NOT EXISTS recipe (
   recipe_id INT,
-  recipe_name NVARCHAR(600),
-  recipe_instructions NVARCHAR(32000),
+  recipe_name VARCHAR(600),
+  recipe_instructions VARCHAR(32000),
   PRIMARY KEY (recipe_id)
   );
 
 CREATE TABLE IF NOT EXISTS ingredient (
   ingredient_id INT,
-  ingredient_name NVARCHAR(200),
-  ingredient_type NVARCHAR(1000),
+  ingredient_name VARCHAR(200),
+  ingredient_type VARCHAR(1000),
   PRIMARY KEY (ingredient_id)
   );
 
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS recipe_ingredients (
   recipe_id INT,
   ingredient_id INT,
   amount DECIMAL (10, 2),
-  unit NVARCHAR (50),
+  unit VARCHAR (50),
   PRIMARY KEY (recipe_id, ingredient_id),
   FOREIGN KEY (recipe_id)
   REFERENCES recipe (recipe_id),
@@ -26,9 +26,10 @@ CREATE TABLE IF NOT EXISTS recipe_ingredients (
 
 CREATE TABLE IF NOT EXISTS course (
   course_id INT,
-  course_name NVARCHAR(400),
+  course_name VARCHAR(400),
+  course_theme VARCHAR(100),
   course_online BOOLEAN,
-  course_difficulty NVARCHAR(100),
+  course_difficulty VARCHAR(100),
   PRIMARY KEY (course_id)
   );
 
@@ -53,17 +54,17 @@ CREATE TABLE IF NOT EXISTS course_recipes (
 
 CREATE TABLE IF NOT EXISTS user (
   user_id INT,
-  user_username NVARCHAR (50),
-  user_name NVARCHAR (100),
-  user_firstname NVARCHAR (100),
-  user_password NVARCHAR(200),
+  user_username VARCHAR (50),
+  user_name VARCHAR (100),
+  user_firstname VARCHAR (100),
+  user_password VARCHAR(200),
   user_admin BOOLEAN,
   PRIMARY KEY (user_id)
   );
 
 CREATE TABLE IF NOT EXISTS role (
   role_id INT,
-  role_name NVARCHAR (50)
+  role_name VARCHAR (50)
   PRIMARY KEY (role_id)
   );
 
@@ -80,7 +81,7 @@ CREATE TABLE IF NOT EXISTS user_roles (
 CREATE TABLE IF NOT EXISTS user_courses (
   user_id INT,
   course_id INT,
-  course_status NVARCHAR (50),
+  course_status VARCHAR (50),
   PRIMARY KEY (user_id, course_id),
   FOREIGN KEY (user_id)
   REFERENCES user (participant_id),

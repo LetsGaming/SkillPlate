@@ -19,26 +19,26 @@ services:
     networks:
       - ords-net
 
-  ords:
-    container_name: ords
-    networks:
-      - ords-net
-    ports:
-      - "8080:8080"
-    depends_on:
-      oracle-db:
-        # condition: service_healthy
-        condition: service_started
-    environment:
-      - DB_HOSTNAME=oracle-db
-      - DB_PORT=1521
-      - DB_SERVICE=FREEPDB1
-      - DB_PASSWORD=A_rD5tr0ng_PwsD_2025!
-      - ORDS_PUBLIC_PASSWORD=A_rD5tr0ng_PwsD_2025!
-    volumes:
-      - ords_config:/opt/ords_config
-    build: backend/ords
-    restart: unless-stopped
+  # ords:
+  #   container_name: ords
+  #   networks:
+  #     - ords-net
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     oracle-db:
+  #       # condition: service_healthy
+  #       condition: service_started
+  #   environment:
+  #     - DB_HOSTNAME=oracle-db
+  #     - DB_PORT=1521
+  #     - DB_SERVICE=FREEPDB1
+  #     - DB_PASSWORD=A_rD5tr0ng_PwsD_2025!
+  #     - ORDS_PUBLIC_PASSWORD=A_rD5tr0ng_PwsD_2025!
+  #   volumes:
+  #     - ords_config:/opt/ords_config
+  #   build: backend/ords
+  #   restart: unless-stopped
 
   backend:
     build: backend

@@ -1,0 +1,14 @@
+-- CREATE IF NOT EXISTS PROCEDURE (name VARCHAR,
+--   instructions VARCHAR) 
+--   BEGIN
+--     INSERT INTO recipe (recipe_name,
+--       recipe_instructions) VALUES 
+--       (name, 
+--         instructions);
+--   END;
+--
+-- CREATE IF NOT EXISTS PROCEDURE AddCourse (course_in IN CLOB)
+--   IS
+--     course JSON_OBJECT_T := JSON_OBJECT_T(course_in);
+--     recipe JSON_ARRAY_T := course.get_Array('recipes');
+--     ingredients
