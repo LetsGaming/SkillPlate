@@ -16,8 +16,9 @@ def get_course(id):
 
 @course_routes.route('/course', defaults={'theme': None, 'difficulty': None, 'duration': None, 'online': None},
                      methods=['POST'])
-@course_routes.route('/course/<string:theme>/<string:difficulty>/<string:duration>/<string:online>', methods=['POST'])
+@course_routes.route('/course/<string:theme>/<string:difficulty>/<integer:duration>/<boolean:online>', methods=['POST'])
 def create_course(theme, difficulty, duration, online):
     course = generate_course_content(theme, difficulty, duration, online)
     return success_response(
+        data={"course": course},
         message="Course created successfully")
