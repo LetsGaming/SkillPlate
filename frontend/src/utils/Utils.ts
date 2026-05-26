@@ -19,7 +19,7 @@ const getRuntimeConfig = (): AppConfig => {
   const env = (window as any)._env_ || import.meta.env || {};
 
   return {
-    baseUrl: env.VITE_API_BASE_URL || "http://localhost",
+    baseUrl: env.VITE_API_BASE_URL || "http://127.0.0.1:5000",
     basePath: env.VITE_API_BASE_PATH || "/api",
     apiVersion: env.VITE_API_VERSION || "/v1",
     port: env.VITE_API_PORT || "",

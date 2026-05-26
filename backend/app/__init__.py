@@ -13,8 +13,6 @@ from app.utils.jwt_callbacks import register_jwt_callbacks
 # Initialize extension
 jwt = JWTManager()
 
-# Author: { name: "LetsGamingDE", id: 272402865874534400n}
-
 def create_app():
     app = Flask(__name__)
     
@@ -22,7 +20,7 @@ def create_app():
     app.config.from_object(Config)
 
     # Initialize Extensions
-    CORS(app)
+    CORS(app, supports_credentials=True, origins=app.config.get("CORS_ORIGINS", ["http://localhost:5173"]))
     jwt.init_app(app)
     
     # Register the custom error responses for JWT
@@ -54,11 +52,15 @@ def create_app():
                     
                     if hasattr(module, blueprint_attr):
                         blueprint = getattr(module, blueprint_attr)
+
+                        # Combine /api/v1 with the blueprint's own url_prefix (e.g. /auth, /course)
+                        base_prefix = f"/api{Config.VERSION_PATH}"
+                        bp_prefix = getattr(blueprint, "url_prefix", "") or ""
+                        full_prefix = f"{base_prefix}{bp_prefix}"
+
+                        app.register_blueprint(blueprint, url_prefix=full_prefix)
                         
-                        # Prefix all routes with /api
-                        app.register_blueprint(blueprint, url_prefix="/api")
-                        
-                        LOGGER.info(f"Registered blueprint: {blueprint_attr} at /api")
+                        LOGGER.info(f"Registered blueprint: {blueprint_attr} at {full_prefix}")
                     else:
                         LOGGER.warning(f"Skipping {file}: No attribute found.")
                         

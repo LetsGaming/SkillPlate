@@ -6,10 +6,10 @@ from flask_jwt_extended import (
     unset_jwt_cookies
 )
 
-from backend.app.services.auth_service import authenticate_user, generate_user_tokens, refresh_access_token
-from backend.app.utils.responses import success_response, error_response
+from app.services.auth_service import authenticate_user, generate_user_tokens, refresh_access_token
+from app.utils.responses import success_response, error_response
 
-auth_routes = Blueprint("auth_routes", __name__)
+auth_routes = Blueprint("auth_routes", __name__, url_prefix="/auth")
 
 @auth_routes.route("/login", methods=["POST"])
 def login():
