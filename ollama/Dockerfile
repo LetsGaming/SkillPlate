@@ -1,4 +1,4 @@
-FROM ollama/ollama:0.12.9
+FROM ollama/ollama:0.30.0-rc25-rocm
 
 
 # RUN ollama pull gemma4:e2b

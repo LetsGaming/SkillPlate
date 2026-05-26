@@ -6,7 +6,7 @@ WORKDIR /frontend
 # Copy dependency manifests first (for caching)
 COPY package*.json ./
 
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 # Copy the rest of the source
 COPY . .
