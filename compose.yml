@@ -1,0 +1,87 @@
+services:
+  oracle-db:
+    image: container-registry.oracle.com/database/free:latest-lite
+    hostname: oracle-db
+    ports:
+      - 1521:1521
+    environment:
+      - ORACLE_PASSWORD=A_rD5tr0ng_PwsD_2025!
+    # healthcheck:
+    #   test: ["CMD", "/usr/bin/healthcheck"]
+    #   start_period: 3m
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5
+    restart: unless-stopped
+    volumes:
+      - oracle_data:/opt/oracle/oradata
+      - ./backend/database/scripts:/opt/oracle/scripts/setup
+    networks:
+      - ords-net
+
+  # ords:
+  #   container_name: ords
+  #   networks:
+  #     - ords-net
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     oracle-db:
+  #       # condition: service_healthy
+  #       condition: service_started
+  #   environment:
+  #     - DB_HOSTNAME=oracle-db
+  #     - DB_PORT=1521
+  #     - DB_SERVICE=FREEPDB1
+  #     - DB_PASSWORD=A_rD5tr0ng_PwsD_2025!
+  #     - ORDS_PUBLIC_PASSWORD=A_rD5tr0ng_PwsD_2025!
+  #   volumes:
+  #     - ords_config:/opt/ords_config
+  #   build: backend/ords
+  #   restart: unless-stopped
+
+  backend:
+    build: backend
+    container_name: skillplate-backend
+    environment:
+      # These must be set here so Docker Compose/runtime sees them
+      - PORT=5000
+      - WORKERS=4
+      - DEBUG=false
+      - PYTHONPATH=/app
+    ports:
+      # Map the internal container port to a host port
+      - "5000:5000"
+    networks:
+      - ords-net
+    restart: unless-stopped
+
+  ollama:
+    build: ollama
+    container_name: ollama
+    ports:
+      - "11434:11434" # Map the default Ollama API port (Host:Container)
+    networks:
+      - ords-net # Connect it to your existing network
+    volumes:
+      - ollama_data:/root/.ollama # Persist models and data
+    restart: unless-stopped
+    # command: /bin/sh -c "ollama pull gemma3:270m && ollama serve"
+
+  frontend:
+    build: frontend
+    container_name: skillplate-frontend
+    ports:
+      - "3000:80"
+    networks:
+      - ords-net
+    restart: unless-stopped
+
+networks:
+  ords-net:
+    driver: bridge
+
+volumes:
+  oracle_data:
+  ords_config:
+  ollama_data:
