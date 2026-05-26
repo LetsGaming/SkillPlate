@@ -1,5 +1,5 @@
 import os
-from datetime import timedelta
+
 
 class Config:
     """
@@ -13,7 +13,7 @@ class Config:
     DEBUG = os.getenv("DEBUG", "false").lower() in ("1", "true", "yes")
     PORT = int(os.getenv("PORT", 5000))
 
-    CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
+    CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
 
     # Required for HttpOnly refresh token cookie
     JWT_TOKEN_LOCATION = ["headers", "cookies"]
@@ -25,8 +25,10 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///app.db")
 
+
 class DevelopmentConfig(Config):
     DEBUG = True
+
 
 class ProductionConfig(Config):
     DEBUG = False
@@ -34,6 +36,7 @@ class ProductionConfig(Config):
     # If they are missing, the app will fail to start (which is good)
     SECRET_KEY = os.environ.get("SECRET_KEY")
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
+
 
 # Dictionary to help select the config based on an environment variable
 config_by_name = {

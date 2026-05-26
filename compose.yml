@@ -49,6 +49,7 @@ services:
       - WORKERS=4
       - DEBUG=false
       - PYTHONPATH=/app
+      - OLLAMA_API_KEY=c7baef6c604241bd9c1e15ee3e5944e2.DgbsqgktbWbaL8Bv2UjLR7ky
     ports:
       # Map the internal container port to a host port
       - "5000:5000"
@@ -57,17 +58,15 @@ services:
     restart: unless-stopped
 
   ollama:
-    build: ollama
+    image: ollama/ollama:0.30.0-rc25-rocm
     container_name: ollama
     ports:
-      - "11434:11434" # Map the default Ollama API port (Host:Container)
+      - "11434:11434"
     networks:
-      - ords-net # Connect it to your existing network
+      - ords-net
     volumes:
-      - ollama_data:/root/.ollama # Persist models and data
+      - ollama_data:/root/.ollama
     restart: unless-stopped
-    # command: /bin/sh -c "ollama pull gemma3:270m && ollama serve"
-
   frontend:
     build: frontend
     container_name: skillplate-frontend
