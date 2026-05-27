@@ -50,6 +50,7 @@ services:
       - DEBUG=false
       - PYTHONPATH=/app
       - OLLAMA_API_KEY=c7baef6c604241bd9c1e15ee3e5944e2.DgbsqgktbWbaL8Bv2UjLR7ky
+      - GEMINI_API_KEY=AIzaSyCknI0K8YOw2iv4BgiAlfiKZocz5fGxTfs
     ports:
       # Map the internal container port to a host port
       - "5000:5000"

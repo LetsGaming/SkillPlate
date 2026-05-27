@@ -15,7 +15,7 @@ requests>=2.31
 # Ollama client to talk to local Ollama LLM server
 ollama
 
-openai
+google-genai
 
 # Production WSGI server
 gunicorn>=20.1

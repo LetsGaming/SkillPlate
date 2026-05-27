@@ -21,5 +21,5 @@ def create_course(theme, difficulty, duration: str, online):
     online_ = bool(online)
     course = generate_course_content(theme, difficulty, duration_, online_)
     return success_response(
-        data={"course": course},
+        data={"course": course.model_dump()},
         message="Course created successfully")

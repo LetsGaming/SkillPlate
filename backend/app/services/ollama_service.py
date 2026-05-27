@@ -1,7 +1,5 @@
-import os
-import re
-
-from openai import OpenAI
+from google import genai
+from google.genai import types
 from pydantic import BaseModel, ValidationError
 
 
@@ -27,14 +25,11 @@ class Course(BaseModel):
 
 
 # client = ollama.Client(host="http://ollama:11434")
-client = OpenAI(
-    base_url="https://ollama.com/v1",
-    api_key=os.environ.get("OLLAMA_API_KEY")
-)
+client = genai.Client()
 
 
 def generate_course_content(theme: str, difficulty: str, duration: int, online: bool):
-    model: str = "gemma4:31b"
+    model: str = "gemini-3.1-flash-lite"
 
     prompt = (
         f"Erstelle einen Kurs mit Rezepten zum Thema '{theme}'. "
@@ -43,33 +38,25 @@ def generate_course_content(theme: str, difficulty: str, duration: int, online: 
     )
 
     try:
-        response = client.chat.completions.parse(
+        response = client.models.generate_content(
             model=model,
-            temperature=0.0,  # Wichtig für strikte Fakten/Strukturen
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are a professional chef. You must output valid JSON matching the schema. "
-                        "CRITICAL: Do NOT wrap the response in ```json ... ``` code blocks. "
-                        "Output ONLY the raw JSON string starting with { and ending with }."
-                    )
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
-            # Das hier sorgt dafür, dass die Cloud das Schema strikt erzwingt
-            response_format=Course
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                system_instruction="You are a professional chef.",
+                temperature=0.0,  # Wichtig für strikte Strukturen
+                # Hier zwingen wir Gemini, exakt dein Pydantic-Schema zu nutzen
+                response_mime_type="application/json",
+                response_schema=Course,
+            ),
         )
 
-        # Das Ergebnis kommt bereits fertig als "Course"-Objekt zurück!
-        course_object = response.choices[0].message.content.strip()
+        # 4. Validierung und Umwandlung in das Pydantic-Objekt
+        # Gemini liefert bei 'response_schema' validiertes JSON als Text im .text-Attribut
+        course_object = Course.model_validate_json(response.text)
 
-        if course_object.startswith("```"):
-            re.sub(r'\s*```$', '', course_object)
-        print(course_object)
+        print("Erfolgreich generiert:")
+        print(course_object.model_dump_json(indent=2))
+
         return course_object
     except ValidationError as e:
         print(f"Falsches Objekt wurde zurückgegben: {e}")
