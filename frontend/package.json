@@ -1,0 +1,45 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "test:e2e": "cypress run",
+    "test:unit": "vitest",
+    "lint": "eslint .",
+    "update": "node scripts/update-deps.js"
+  },
+  "dependencies": {
+    "@capacitor/app": "8.1.0",
+    "@capacitor/core": "8.3.0",
+    "@capacitor/haptics": "8.0.2",
+    "@capacitor/keyboard": "8.0.2",
+    "@capacitor/status-bar": "8.0.2",
+    "@ionic/storage": "^4.0.0",
+    "@ionic/vue": "^8.8.3",
+    "@ionic/vue-router": "^8.8.3",
+    "ionicons": "^8.0.13",
+    "vue": "^3.5.32",
+    "vue-router": "^5.0.4"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.3.0",
+    "@vitejs/plugin-legacy": "^8.0.1",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "@vue/eslint-config-typescript": "^14.7.0",
+    "@vue/test-utils": "^2.4.6",
+    "cypress": "^15.13.1",
+    "eslint": "^10.2.0",
+    "eslint-plugin-vue": "^10.8.0",
+    "jsdom": "^29.0.2",
+    "terser": "^5.46.1",
+    "typescript": "~6.0.2",
+    "vite": "~8.0.8",
+    "vitest": "^4.1.4",
+    "vue-tsc": "^3.2.6"
+  },
+  "description": "An Ionic project"
+}

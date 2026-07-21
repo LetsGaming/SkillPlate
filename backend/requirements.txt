@@ -1,0 +1,21 @@
+# Flask API
+Flask>=2.3
+
+# CORS support
+Flask-Cors>=4.0
+
+Flask-JWT-Extended>=4.7.1
+
+# Load .env config
+python-dotenv>=1.0
+
+# HTTP client for calling ORDS (Oracle REST Data Services) endpoints
+requests>=2.31
+
+# Ollama client to talk to local Ollama LLM server
+ollama
+
+google-genai
+
+# Production WSGI server
+gunicorn>=20.1
